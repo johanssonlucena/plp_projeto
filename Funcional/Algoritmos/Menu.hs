@@ -9,9 +9,11 @@ import System.IO.Unsafe
 
 --      --> IMPORTS DAS ENTIDADES <--
 
---import Morador
---import Casa
-
+import Morador
+import Casa
+import Veiculo
+import VisitanteAutorizado
+import Funcionario
 
 --       -->  METODOS AUXILIARES  <--
 
@@ -119,7 +121,7 @@ telaOpcoesAdministracao :: Integer -> IO ()
 telaOpcoesAdministracao cursor = do
    
    system "clear"
-   putStrLn ("Bem vindo, Sr(a). Administrador! \n\n|| Tecle (Seta Direita) para escolher qual opcão acessar e (Seta Esquerda) para voltar à tela anterior. ||")
+   putStrLn ("Bem vindo, Sr(a). Administrador! \n|| Tecle (Seta Direita) para escolher qual opcão acessar e (Seta Esquerda) para voltar à tela anterior. ||\n")
    showSimpleScreen opcoesTelaAdm cursor 0
    hSetBuffering stdin NoBuffering
    hSetEcho stdin False
@@ -130,37 +132,39 @@ telaOpcoesAdministracao cursor = do
 
 --   > OPCAO CADASTRAR CASA  <--
 
-listaMoradoresInicial:: [String]
-listaMoradoresInicial = []
+listaInicial :: [Morador]
+listaInicial = []
 
 cadastroCasaTela :: IO ()
 cadastroCasaTela = do
    system "clear"
 
+   putStrLn ("Digite o Nome do responsável da Casa")
+   responsavel <- lerEntradaString
+
+   putStrLn ("Digite o Cpf do responsável da Casa")
+   cpf <- lerEntradaString
+
    putStrLn ("Digite o numeral da Casa:")
    numero <- lerEntradaString
 
-   putStrLn ("\nDigite qual rua está localizado")
+   putStrLn ("Digite qual rua está localizado")
    rua <- lerEntradaString
 
-   putStrLn ("\nDigite o Nome do responsável da Casa")
-   responsavel <- lerEntradaString
-
-   putStrLn ("\nDigite o Cpf do responsável da Casa")
-   cpf <- lerEntradaString
-
-   putStrLn ("\nDigite a data do cadastro (formato DD/MM/AAAA):")
+   putStrLn ("Digite a data do cadastro (formato DD/MM/AAAA):")
    dataCadastro <- lerEntradaString
 
-   putStrLn("\nCasa Cadastrada com sucesso!\n")
+   putStrLn("\nCasa Cadastrada!\n")
    
    hSetBuffering stdin NoBuffering
    hSetEcho stdin False
 
-  -- let casa = Casa numero rua responsavel cpf dataCadastro listaMoradoresInicial
-  -- let listaCasa = [casa]
-  -- let adicionarCasa = listaCasa
-   --escreverArquivoCasa adicionarCasa
+
+
+   let casa = Casa numero rua responsavel cpf dataCadastro listaInicial
+   let listaCasa = [casa]
+   let adicionarCasa = listaCasa
+   escreverArquivoCasa adicionarCasa
    
    action <- getKey
    telaInicial 0
@@ -173,27 +177,27 @@ cadastroMoradorTela :: IO ()
 cadastroMoradorTela = do
    system "clear"
 
-   putStrLn ("Digite a unidade residencial:")
+   putStrLn ("Digite a unidade residencial do morador:")
    casa <- lerEntradaString
+
+   putStrLn ("Digite o nome do morador:")
+   nome <- lerEntradaString
 
    putStrLn ("Digite o cpf do morador:")
    cpf <- lerEntradaString
 
-   putStrLn ("\nDigite o nome do morador:")
-   nome <- lerEntradaString
+   putStrLn ("Digite a data de Nascimento:")
+   dataNascimento <- lerEntradaString
 
-   putStrLn ("\nDigite a idade do morador:")
-   idade <- lerEntradaInt
-
-   putStrLn ("\nDigite o sexo do morador:")
+   putStrLn ("Digite o sexo do morador:")
    sexo <- lerEntradaString
 
-  -- let morador = Morador casa cpf nome idade sexo 
-  -- let listaMoradores = [produto]
-  -- let adicionarMorador = listaMoradores
-  -- escreverArquivo adicionarMorador
-   
-   putStrLn("\nMorador cadastrado com sucesso!\n")
+   let morador = Morador casa nome cpf dataNascimento sexo 
+   let listaMoradores = [morador]
+   let adicionarMorador = listaMoradores
+   escreverArquivoMorador adicionarMorador
+
+   putStrLn("\nMorador cadastrado!\n")
    
    hSetBuffering stdin NoBuffering
    hSetEcho stdin False
@@ -215,18 +219,18 @@ cadastroVeiculoTela = do
    putStrLn ("Digite a placa:")
    placa <- lerEntradaString
 
-   putStrLn ("\nDigite a cor:")
+   putStrLn ("Digite a cor:")
    cor <- lerEntradaString
 
-   putStrLn ("\nDigite o modelo:")
-   modelo <- lerEntradaInt
+   putStrLn ("Digite o modelo:")
+   modelo <- lerEntradaString
 
-  -- let veiculo = Veiculo casa placa cor modelo 
-  -- let listaVeiculo = [veiculo]
-  -- let adicionarVeiculo = listaveiculos
-  -- escreverArquivo adicionarVeiculo
+   let veiculo = Veiculo casa placa cor modelo 
+   let listaVeiculo = [veiculo]
+   let adicionarVeiculo = listaVeiculo
+   escreverArquivoVeiculo adicionarVeiculo
    
-   putStrLn("\nVeiculo cadastrado com sucesso!\n")
+   putStrLn("\nVeiculo cadastrado!\n")
    
    hSetBuffering stdin NoBuffering
    hSetEcho stdin False
@@ -234,7 +238,6 @@ cadastroVeiculoTela = do
    putStrLn (" ")
 
    telaInicial 0
-
 
 
 --   > OPCAO CADASTRAR VISITANTE AUTORIZADO  <--
@@ -249,16 +252,15 @@ cadastroVisitanteTela = do
    putStrLn ("Digite o cpf do visitante:")
    cpf <- lerEntradaString
 
-   putStrLn ("\nDigite o nome do visitante:")
+   putStrLn ("Digite o nome do visitante:")
    nome <- lerEntradaString
 
-
-  -- let visitante = Visitante casa cpf nome
-  -- let listaVisitantes = [visitante]
-  -- let adicionarVisitante = listaVisitantes
-  -- escreverArquivo adicionarVisitante
+   let visitante = VisitanteAutorizado casa cpf nome
+   let listaVisitantes = [visitante]
+   let adicionarVisitante = listaVisitantes
+   escreverArquivoVisitante adicionarVisitante
    
-   putStrLn("\nVisitante cadastrado com sucesso!\n")
+   putStrLn("\nVisitante cadastrado!\n")
    
    hSetBuffering stdin NoBuffering
    hSetEcho stdin False
@@ -266,7 +268,6 @@ cadastroVisitanteTela = do
    putStrLn (" ")
 
    telaInicial 0
-
 
 
 --   > OPCAO CADASTRAR FUNCIONARIO E PRESTADORES DE SERVICO  <--
@@ -281,16 +282,16 @@ cadastroFuncionarioeOutros = do
    putStrLn ("Digite o cpf:")
    cpf <- lerEntradaString
 
-   putStrLn ("\nDigite a funcao:")
+   putStrLn ("Digite a funcao:")
    funcao <- lerEntradaString
 
 
-  -- let funcionario = Funcionario nome cpf funcao
-  -- let listaVFuncionarios = [funcionario]
-  -- let adicionarFuncionario = listaFuncionarios
-  -- escreverArquivo adicionarFuncionario
+   let funcionario = Funcionario nome cpf funcao
+   let listaFuncionarios = [funcionario]
+   let adicionarFuncionario = listaFuncionarios
+   escreverArquivoFuncionario adicionarFuncionario
    
-   putStrLn("\nVisitante cadastrado com sucesso!\n")
+   putStrLn("\nFuncionario cadastrado!\n")
    
    hSetBuffering stdin NoBuffering
    hSetEcho stdin False
@@ -303,14 +304,14 @@ cadastroFuncionarioeOutros = do
 --      -->  ACESSO PORTARIA  <--
 
 opcoesTelaPortaria :: [String]
-opcoesTelaPortaria = ["Listar Detalhes de Casa", "verificar Veiculo", "Verificar Visitante", "Verificar FuncionarioseOutros"]
+opcoesTelaPortaria = ["Listar Detalhes de Casa", "listar Veiculos", "listar Visitante", "listar FuncionarioseOutros"]
 
 mudarTelaOpcoesPortaria :: Integer -> IO ()
 mudarTelaOpcoesPortaria cursor
-   | cursor == 0 = listarDetalhesCasa
-   | cursor == 1 = verificarVeiculo
-   | cursor == 2 = verificarVisitante
-   | cursor == 3 = verificarFuncionario
+   | cursor == 0 = visualizarCasas
+   | cursor == 1 = visualizarVeiculos
+   | cursor == 2 = visualizarVisitante
+   | cursor == 3 = visualizarFuncionarios
 
 doOpcoesPortaria :: Integer -> [Char] -> IO ()
 doOpcoesPortaria cursor action | action == "\ESC[B" = telaOpcoesPortaria ((cursor+1) `mod` 4)
@@ -413,8 +414,58 @@ verificarFuncionario = do
 
    telaInicial 0
 
+--------------------------------------------
 
-------------------------------------------------------------------------------------------------------------------
+-- Visualizar Casas
+visualizarCasas :: IO ()
+visualizarCasas = do
+      system "clear"
+      casas <- openFile "../arquivos/Casas.csv" ReadMode
+      listaCasas <- lines <$> hGetContents casas
+      print (listaCasas)
+      
+      action <- getKey
+      putStrLn (" ")
+      telaInicial 0
+
+-- Visualizar veiculos
+visualizarVeiculos :: IO ()
+visualizarVeiculos = do
+      system "clear"
+      veiculos <- openFile "../arquivos/Veiculo.csv" ReadMode
+      listaVeiculo <- lines <$> hGetContents veiculos
+      print (listaVeiculo)
+      
+      action <- getKey
+      putStrLn (" ")
+      telaInicial 0
+
+
+-- Visualizar visitante
+visualizarVisitante :: IO ()
+visualizarVisitante = do
+      system "clear"
+      visitante <- openFile "../arquivos/VisitantesAutorizados.csv" ReadMode
+      listaVisitante <- lines <$> hGetContents visitante
+      print (listaVisitante)
+      
+      action <- getKey
+      putStrLn (" ")
+      telaInicial 0
+
+-- Visualizar Funcionarios
+visualizarFuncionarios :: IO ()
+visualizarFuncionarios = do
+      system "clear"
+      funcionarios <- openFile "../arquivos/Funcionarios.csv" ReadMode
+      listaFuncionarios <- lines <$> hGetContents funcionarios
+      print (listaFuncionarios)
+      
+      action <- getKey
+      putStrLn (" ")
+      telaInicial 0
+
+--------------------------------------------------------------------------------------------------
 --      -->   TELA SAIR  <--
 
 doTelaSair :: String -> IO ()

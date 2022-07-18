@@ -1,11 +1,9 @@
 
-module Morador (getMoradorPelocpf, getCpfMorador, fromIO, getMoradoresEmLista,
+module Morador (getMoradorPelocpf, getCpfMorador, fromIO,
     moradorToString,
     getMoradores,
     formataParaEscrita,
-    escreverArquivo,
-    converteEmLista,
-    getMoradoresPuros,
+    escreverArquivoMorador,
     Moradores(Moradores),
     Morador(Morador)
 ) where
@@ -15,9 +13,10 @@ import Util
 import System.IO.Unsafe
 
 data Morador = Morador {
+    casa :: String,    
     cpf :: String,
     nome :: String,
-    idade :: Int,
+    dataNascimento :: String,
     sexo :: String
 } deriving (Show, Read)
 
@@ -28,7 +27,7 @@ data Moradores = Moradores {
 ----------------------------MoradorGetters--------------------
 
 getMoradores :: Moradores -> [Morador]
-getMoradores (Moradores {moradores = p}) = getMoradoresFromTuple p
+getMoradores (Moradores {moradores = m}) = getMoradoresFromTuple m
 
 getMoradoresFromTuple :: [(Int, Morador)] -> [Morador]
 getMoradoresFromTuple [] = []
@@ -45,13 +44,35 @@ getMoradorPelocpf cpf [] = Nothing
 getMoradorPelocpf cpf (p:ps) = if cpf == getCpfMorador p then Just p
     else getMoradorPelocpf cpf ps
 
-
 moradorToString :: Morador -> String
-moradorToString Morador {cpf = c, nome = n, idade = i, sexo = s} = show c ++", " ++ n ++ ", " ++ show i ++ ", " ++ s
+moradorToString Morador {casa = ca, cpf = c, nome = n, dataNascimento = i, sexo = s} = show c ++", " ++ n ++ ", " ++ show i ++ ", " ++ s
 
-
+getAtributosMorador :: Morador -> String
+getAtributosMorador (Morador {casa = ca, cpf = c, nome = n, dataNascimento = d, sexo = s}) = ca ++ ", " ++ c ++ ", " ++ n ++ ", " ++ d ++ ", " ++ s
 
 moradoresToString :: [Morador] -> String
 moradoresToString [] = []
 moradoresToString (p:ps) = if length ps > 0 then do "["++moradorToString p ++"]," ++ moradoresToString ps
     else do "[" ++ moradorToString p ++ "]"
+
+
+-----------------------------IOProduto---------------------------------
+
+escreverArquivoMorador :: [Morador] -> IO ()
+escreverArquivoMorador morador = do
+    arq <- openFile "../arquivos/Moradores.csv" AppendMode
+    
+    print (morador)
+
+    hPutStr arq (formataParaEscrita morador)
+    hClose arq
+
+
+formataParaEscrita :: [Morador] -> String
+formataParaEscrita [] = []
+formataParaEscrita (c:cs) = getAtributosMorador c ++ "\n" ++ formataParaEscrita cs
+
+-- Converte IO em puro
+fromIO :: IO[String] -> [String]
+fromIO x = (unsafePerformIO x :: [String])
+
