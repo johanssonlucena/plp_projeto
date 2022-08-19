@@ -11,6 +11,8 @@
 
 ## Execução
 
+- Fazer o download do projeto e seguir até o diretório da Parte do Paradigma Lógico.
+
 - Para executar o projeto, através do terminal seguir para o diretório "codigo" e digitar o seguinte comando: 
 
      swipl -s Menu.pl
