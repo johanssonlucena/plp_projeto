@@ -11,7 +11,7 @@
 
 ## Execução
 
-- Para executar o projeto, através do terminal seguir para o diretório "plp_projeto/Logico/codigo" e digitar o seguinte comando: 
+- Para executar o projeto, através do terminal seguir para o diretório "codigo" e digitar o seguinte comando: 
 
      swipl -s Menu.pl
 
