@@ -1,4 +1,4 @@
 # plp_projeto
 
-# Projeto Paradigmas Funcional e Lógico.
+# Projeto Paradigmas Funcional (Prolog) e Lógico (Haskell).
 
